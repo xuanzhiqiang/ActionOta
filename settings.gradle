@@ -1,0 +1,1 @@
+include ':app', ':lpvr-release', ':jl_bt_ota', ':bluetooth_utils'
