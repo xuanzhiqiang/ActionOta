@@ -1,13 +1,13 @@
 apply plugin: 'com.android.library'
 apply from: './bintray-config.gradle'
-apply from: './installv1.gradle'
+
 
 def _ext = rootProject.ext
 
-def _compileSdkVersion = _ext.has('compileSdkVersion') ? _ext.compileSdkVersion : 26
-def _buildToolsVersion = _ext.has('buildToolsVersion') ? _ext.buildToolsVersion : '26.0.3'
-def _minSdkVersion = _ext.has('minSdkVersion') ? _ext.minSdkVersion : 16
-def _targetSdkVersion = _ext.has('targetSdkVersion') ? _ext.targetSdkVersion : 26
+def _compileSdkVersion = _ext.has('compileSdkVersion') ? _ext.compileSdkVersion : 28
+def _buildToolsVersion = _ext.has('buildToolsVersion') ? _ext.buildToolsVersion : '28.0.3'
+def _minSdkVersion = _ext.has('minSdkVersion') ? _ext.minSdkVersion : 21
+def _targetSdkVersion = _ext.has('targetSdkVersion') ? _ext.targetSdkVersion : 28
 
 android {
     compileSdkVersion _compileSdkVersion
@@ -24,6 +24,5 @@ dependencies {
 }
 
 
-
-//apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/installv1.gradle'
-//apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/bintrayv1.gradle'
+apply from: './installv1.gradle'
+apply from: './bintrayv1.gradle'
