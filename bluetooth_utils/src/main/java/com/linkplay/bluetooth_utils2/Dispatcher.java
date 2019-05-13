@@ -1,6 +1,7 @@
 package com.linkplay.bluetooth_utils2;
 
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothGatt;
 import android.content.Context;
 import android.os.Handler;
 import android.util.Log;
@@ -176,9 +177,9 @@ public class Dispatcher extends BaseCode {
         }
     }
 
-    void onDescriptorWriteResult(UUID characteristicsUuid, int state){
+    void onDescriptorWriteResult(BluetoothGatt gatt, UUID characteristicsUuid, int state){
         for (LP_BluetoothListener callback : this.mCallbackList) {
-            callback.onDescriptorWriteResult(characteristicsUuid, state);
+            callback.onDescriptorWriteResult(gatt, characteristicsUuid, state);
         }
     }
 

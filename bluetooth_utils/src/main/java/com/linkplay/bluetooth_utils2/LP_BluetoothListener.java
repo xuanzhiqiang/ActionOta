@@ -1,6 +1,7 @@
 package com.linkplay.bluetooth_utils2;
 
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattService;
 
 import java.util.List;
@@ -42,7 +43,7 @@ public abstract class LP_BluetoothListener {
 
     }
 
-    public void onDescriptorWriteResult(UUID characteristicsUuid, int state){
+    public void onDescriptorWriteResult(BluetoothGatt gatt, UUID characteristicsUuid, int state){
 
     }
 }

@@ -121,7 +121,7 @@ class BLEConnect extends BLEDiscovery {
                                 log(TAG, "ENABLE NOTIFY : " + Characteristic_uuid + " : "
                                         + enableBLEDeviceNotification(gatt, gattService, gattCharacteristic));
                             }
-                        }, i * 150);
+                        }, i * 200);
                         i++;
                     }
                 }
@@ -132,7 +132,7 @@ class BLEConnect extends BLEDiscovery {
                 public void run() {
                     onBleConnection(gatt.getDevice(), LP_BLE_STATE_CONNECTED);
                 }
-            }, i * 150);
+            }, i * 200);
 
         }
 
@@ -179,7 +179,7 @@ class BLEConnect extends BLEDiscovery {
             BluetoothGattCharacteristic characteristic = descriptor.getCharacteristic();
             if (null != characteristic) {
                 UUID uuid = characteristic.getUuid();
-                onDescriptorWriteResult(uuid, status);
+                onDescriptorWriteResult(gatt, uuid, status);
             }
         }
 
