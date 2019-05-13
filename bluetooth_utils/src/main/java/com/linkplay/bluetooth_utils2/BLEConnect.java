@@ -8,6 +8,7 @@ import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattDescriptor;
 import android.bluetooth.BluetoothGattService;
 import android.content.Context;
+import android.os.Build;
 import android.os.Message;
 import android.text.TextUtils;
 
@@ -178,7 +179,7 @@ class BLEConnect extends BLEDiscovery {
             BluetoothGattCharacteristic characteristic = descriptor.getCharacteristic();
             if (null != characteristic) {
                 UUID uuid = characteristic.getUuid();
-                loge(TAG,"onDescriptorWrite  UUID: "+uuid.toString()+ " : " + (0 == status));
+                onDescriptorWriteResult(uuid, status);
             }
         }
 
@@ -242,7 +243,11 @@ class BLEConnect extends BLEDiscovery {
         mHandler.sendMessageDelayed(obtain, 15 * 1000); // 15 秒超时
 
         BluetoothGatt bluetoothGatt;
-        bluetoothGatt = bluetoothDevice.connectGatt(mContext, false, mGattCallback, TRANSPORT_LE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            bluetoothGatt = bluetoothDevice.connectGatt(mContext, false, mGattCallback, TRANSPORT_LE);
+        }else{
+            bluetoothGatt = bluetoothDevice.connectGatt(mContext, false, mGattCallback);
+        }
 
         return bluetoothGatt != null;
     }

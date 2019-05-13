@@ -41,4 +41,8 @@ public abstract class LP_BluetoothListener {
     public void onAdapterStatus(boolean open) {
 
     }
+
+    public void onDescriptorWriteResult(UUID characteristicsUuid, int state){
+
+    }
 }

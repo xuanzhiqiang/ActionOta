@@ -176,4 +176,10 @@ public class Dispatcher extends BaseCode {
         }
     }
 
+    void onDescriptorWriteResult(UUID characteristicsUuid, int state){
+        for (LP_BluetoothListener callback : this.mCallbackList) {
+            callback.onDescriptorWriteResult(characteristicsUuid, state);
+        }
+    }
+
 }
