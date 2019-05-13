@@ -81,11 +81,6 @@ public class LP_BTClient implements BTUtilApi {
     }
 
     @Override
-    public ArrayList<BluetoothDevice> getScanDevices() {
-        return bleConnect.getScanDevices();
-    }
-
-    @Override
     public void addScanFilterForServiceUUID(ParcelUuid serviceUuid) {
         bleConnect.addScanFilterForServiceUUID(serviceUuid);
     }

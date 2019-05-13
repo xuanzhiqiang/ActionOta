@@ -5,6 +5,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothGatt;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Environment;
@@ -91,13 +92,13 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         adapter.clearData();
-                        bleManager.startScan();
                         if (currentDeice != null){
                             adapter.addDevice(currentDeice);
                         }
                         swipeRefreshLayout.setRefreshing(false);
+                        bleManager.startScan();
                     }
-                }, 1000);
+                }, 500);
             }
         });
 
@@ -228,7 +229,7 @@ public class MainActivity extends AppCompatActivity {
                             @SuppressLint("SetTextI18n")
                             @Override
                             public void run() {
-                                btStart.setText("升级中："+v);
+                                btStart.setText("升级中："+v + " ,  时间： "+ (jlOtaManager.getTotalTime() / 1000) + "秒");
                             }
                         }, 20);
                     }
@@ -242,6 +243,9 @@ public class MainActivity extends AppCompatActivity {
                         public void run() {
                             btStart.setText("onStopOTA Success");
                             btStart.setEnabled(true);
+                            Toast.makeText(MainActivity.this.getApplicationContext(),
+                                    " 升级结束: 耗时："+(jlOtaManager.getTotalTime() / 1000)+"秒",
+                                    Toast.LENGTH_LONG).show();
                         }
                     }, 20);
                 }
@@ -382,6 +386,16 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
+            public void onMTUChange(int mtu) {
+                if(jlOtaManager != null ){
+                    BluetoothGatt deviceGatt = bleManager.getDeviceGatt();
+                    if (deviceGatt!=null) {
+                        jlOtaManager.onMtuChanged(deviceGatt, mtu+3, 0);
+                    }
+                }
+            }
+
+            @Override
             public void onCharacteristicChanged(String address, UUID serviceUuid, UUID characteristicUuid, final byte[] data) {
                 final String receive = "Receive: "+ HexUtil.encodeHexStr(data, false);
                 Log.i(TAG, characteristicUuid.toString()+"  |  "+receive);
@@ -496,6 +510,8 @@ public class MainActivity extends AppCompatActivity {
             public void onCommand(String address, int command, int length, byte[] parameter) {
 
             }
+
+
         });
     }
 

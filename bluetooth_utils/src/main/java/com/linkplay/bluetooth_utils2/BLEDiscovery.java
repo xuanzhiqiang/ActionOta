@@ -19,7 +19,6 @@ class BLEDiscovery extends BTAdapter {
     private static final String TAG = "LP_BleDiscovery";
 
     private boolean mScanning;
-    private final ArrayList<BluetoothDevice> mScanDevices = new ArrayList<>();
     private final List<ScanFilter> mScanFilters = new ArrayList<>();
 
     private Runnable mStopScanTask = new Runnable() {
@@ -36,10 +35,6 @@ class BLEDiscovery extends BTAdapter {
 
             int rssi = result.getRssi();
             BluetoothDevice bluetoothDevice = result.getDevice();
-
-            if (mScanDevices.contains(bluetoothDevice)) {
-                return;
-            }
 
             ScanRecord scanRecord = result.getScanRecord();
 
@@ -64,10 +59,6 @@ class BLEDiscovery extends BTAdapter {
 
     boolean isScanning() {
         return mScanning;
-    }
-
-    ArrayList<BluetoothDevice> getScanDevices() {
-        return mScanDevices;
     }
 
     void clearFilter() {
@@ -108,7 +99,6 @@ class BLEDiscovery extends BTAdapter {
             log(TAG, " [LP] StartScan....");
 
             mScanning = true;
-            mScanDevices.clear();
 
             ScanSettings scanSettings = new ScanSettings.Builder()
                     .setScanMode(ScanSettings.SCAN_MODE_LOW_POWER).build();

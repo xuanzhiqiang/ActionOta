@@ -47,7 +47,6 @@ public interface BTUtilApi {
 
     boolean startScan();
     boolean stopScan();
-    ArrayList<BluetoothDevice> getScanDevices();
     void addScanFilterForServiceUUID(ParcelUuid serviceUuid);
     void clearFilter();
 

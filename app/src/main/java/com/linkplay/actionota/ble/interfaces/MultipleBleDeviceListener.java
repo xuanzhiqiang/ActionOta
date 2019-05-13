@@ -31,4 +31,6 @@ public interface MultipleBleDeviceListener {
     void onCommandResponse(int errorCode, int commandCode, int parameterLength, byte[] data) throws Exception;
 
     void onCommand(String address, int command, int length, byte[] parameter);
+
+    void onMTUChange(int mtu);
 }

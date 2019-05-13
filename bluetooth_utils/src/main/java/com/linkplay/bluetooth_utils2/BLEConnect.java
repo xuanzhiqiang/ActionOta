@@ -313,7 +313,7 @@ class BLEConnect extends BLEDiscovery {
                 return false;
             }
             try {
-                Thread.sleep(20L);
+                Thread.sleep(10L);
             } catch (Exception ignored) { }
         }
 
