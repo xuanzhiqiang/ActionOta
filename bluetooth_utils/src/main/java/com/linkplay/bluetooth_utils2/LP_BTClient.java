@@ -132,4 +132,9 @@ public class LP_BTClient implements BTUtilApi {
         }
         return null;
     }
+
+    @Override
+    public void setIntervalTime(int intervalTime) {
+        bleConnect.setIntervalTime(intervalTime);
+    }
 }

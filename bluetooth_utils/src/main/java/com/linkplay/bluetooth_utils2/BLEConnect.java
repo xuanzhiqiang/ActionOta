@@ -30,6 +30,7 @@ class BLEConnect extends BLEDiscovery {
     private final List<String> mConnectedAddressList = new CopyOnWriteArrayList<>();
     private final Map<String, BluetoothGatt> mBluetoothGattMap = new ConcurrentHashMap<>();
 
+    private int intervalTime = 10;
     private int WRITE_DATA_BLOCK_SIZE = 20;
     private final List<byte[]> mDatas = new ArrayList<>();
 
@@ -265,6 +266,10 @@ class BLEConnect extends BLEDiscovery {
     }
 
 
+    public void setIntervalTime(int intervalTime) {
+        this.intervalTime = intervalTime;
+    }
+
     boolean writeDataToBLEDevice(String address, UUID serviceUUID, UUID characteristicUUID, final byte[] writeData) {
 
         if(TextUtils.isEmpty(address)){
@@ -322,7 +327,7 @@ class BLEConnect extends BLEDiscovery {
                     return false;
                 }
                 try {
-                    Thread.sleep(10L);
+                    Thread.sleep(this.intervalTime);
                 } catch (Exception ignored) { }
             }
         }

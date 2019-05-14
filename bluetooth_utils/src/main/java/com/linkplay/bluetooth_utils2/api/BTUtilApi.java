@@ -58,6 +58,12 @@ public interface BTUtilApi {
     BluetoothGatt getBluetoothGatt(BluetoothDevice bluetoothDevice);
 
     /**
+     *
+     * @param intervalTime 发送数据间隔时间
+     */
+    void setIntervalTime(int intervalTime);
+
+    /**
      * @param logEnable 是否开启log， 默认开启
      */
     void setLogEnable(boolean logEnable);
