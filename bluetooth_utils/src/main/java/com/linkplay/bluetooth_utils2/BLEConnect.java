@@ -31,7 +31,7 @@ class BLEConnect extends BLEDiscovery {
     private final Map<String, BluetoothGatt> mBluetoothGattMap = new ConcurrentHashMap<>();
 
     private int WRITE_DATA_BLOCK_SIZE = 20;
-    private List<byte[]> mDatas = new ArrayList<>();
+    private final List<byte[]> mDatas = new ArrayList<>();
 
     BLEConnect(Context context) {
         super(context);
@@ -265,7 +265,7 @@ class BLEConnect extends BLEDiscovery {
     }
 
 
-    synchronized boolean writeDataToBLEDevice(String address, UUID serviceUUID, UUID characteristicUUID, final byte[] writeData) {
+    boolean writeDataToBLEDevice(String address, UUID serviceUUID, UUID characteristicUUID, final byte[] writeData) {
 
         if(TextUtils.isEmpty(address)){
             this.loge(TAG, "TextUtils.isEmpty(address)");
@@ -296,30 +296,35 @@ class BLEConnect extends BLEDiscovery {
         }
 
         // 根据MTU切割发送数据包
-        this.mDatas.clear();
-        int length = writeData.length;
-        int iBlockCount = length / this.WRITE_DATA_BLOCK_SIZE;
+        synchronized (mDatas){
 
-        for(int i = 0; i < iBlockCount; ++i) {
-            byte[] mBlockData = new byte[this.WRITE_DATA_BLOCK_SIZE];
-            System.arraycopy(writeData, i * this.WRITE_DATA_BLOCK_SIZE, mBlockData, 0, mBlockData.length);
-            this.mDatas.add(mBlockData);
-        }
+            this.mDatas.clear();
+            int length = writeData.length;
+            int iBlockCount = length / this.WRITE_DATA_BLOCK_SIZE;
 
-        if (0 != length % this.WRITE_DATA_BLOCK_SIZE) {
-            byte[] noBlockData = new byte[length % this.WRITE_DATA_BLOCK_SIZE];
-            System.arraycopy(writeData, length - length % this.WRITE_DATA_BLOCK_SIZE, noBlockData, 0, noBlockData.length);
-            this.mDatas.add(noBlockData);
-        }
-
-        for (int i = 0; i < mDatas.size(); i++) {
-            characteristic.setValue(mDatas.get(i));
-            if(!bluetoothGatt.writeCharacteristic(characteristic)){
-                return false;
+            if(iBlockCount == 0){
+                this.mDatas.add(writeData);
+            }else{
+                for(int i = 0; i < iBlockCount; ++i) {
+                    byte[] mBlockData = new byte[this.WRITE_DATA_BLOCK_SIZE];
+                    System.arraycopy(writeData, i * this.WRITE_DATA_BLOCK_SIZE, mBlockData, 0, mBlockData.length);
+                    this.mDatas.add(mBlockData);
+                }
+                if (0 != length % this.WRITE_DATA_BLOCK_SIZE) {
+                    byte[] noBlockData = new byte[length % this.WRITE_DATA_BLOCK_SIZE];
+                    System.arraycopy(writeData, length - length % this.WRITE_DATA_BLOCK_SIZE, noBlockData, 0, noBlockData.length);
+                    this.mDatas.add(noBlockData);
+                }
             }
-            try {
-                Thread.sleep(10L);
-            } catch (Exception ignored) { }
+            for (int i = 0; i < mDatas.size(); i++) {
+                characteristic.setValue(mDatas.get(i));
+                if(!bluetoothGatt.writeCharacteristic(characteristic)){
+                    return false;
+                }
+                try {
+                    Thread.sleep(10L);
+                } catch (Exception ignored) { }
+            }
         }
 
         return true;
