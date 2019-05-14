@@ -77,7 +77,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         bleManager = BleManager.init(getApplicationContext());
-        jlOtaManager = JLOtaManager.initOTAManager(getApplicationContext(), bleManager);
+//        jlOtaManager = JLOtaManager.initOTAManager(getApplicationContext(), bleManager);
+        jlOtaManager = null;
 
         listView = findViewById(R.id.list_view);
         swipeRefreshLayout = findViewById(R.id.swipeLayout);
@@ -114,11 +115,11 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-//        otaPath = Environment.getExternalStorageDirectory().getPath()
-//                + File.separator+"actionOtaFile"+File.separator+"action.OTA";
-
         otaPath = Environment.getExternalStorageDirectory().getPath()
-                + File.separator+"actionOtaFile"+File.separator+"updata.bfu";
+                + File.separator+"actionOtaFile"+File.separator+"action.OTA";
+
+//        otaPath = Environment.getExternalStorageDirectory().getPath()
+//                + File.separator+"actionOtaFile"+File.separator+"updata.bfu";
 
         File file = new File(Environment.getExternalStorageDirectory().getPath() + File.separator + "actionOtaFile");
         if (!file.exists()) {
@@ -139,8 +140,8 @@ public class MainActivity extends AppCompatActivity {
                 if (new File(otaPath).exists()) {
                     mOtaing = true;
 
-//                    actionOtaManager.startOTA(otaPath);
-                    startJLOta(otaPath);
+                    actionOtaManager.startOTA(otaPath);
+//                    startJLOta(otaPath);
                 }else{
                     showToast("文件不存在");
                 }
@@ -160,7 +161,7 @@ public class MainActivity extends AppCompatActivity {
         addListener();
         requestPermission();
 
-//        initActionOta();
+        initActionOta();
     }
 
 
@@ -406,9 +407,12 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
-                if(jlOtaManager != null && bleManager.isJLOtaNotifyData(characteristicUuid)){
+                if(mOtaing && jlOtaManager != null && bleManager.isJLOtaNotifyData(characteristicUuid)){
                     jlOtaManager.onReceiveDeviceData(BluetoothAdapter.getDefaultAdapter().getRemoteDevice(address), data);
+                }else if(mOtaing){
+                    actionOtaManager.onReceive(data);
                 }
+
             }
 
             @Override

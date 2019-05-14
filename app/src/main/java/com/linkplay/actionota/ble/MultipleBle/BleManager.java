@@ -95,62 +95,16 @@ public class BleManager {
                 String name = bleDevice.getName();
                 Log.i(TAG, "scan :   ---->    name: " + name + " mac: "+ bleDevice.getAddress());
                 if (!mScanDevices.contains(bleDevice)) {
-
-                // TODO  解析广播包： 区分设备类型
-//                if (scanRecord.length > 0) {
-//                    byte[] data = Arrays.copyOfRange(scanRecord, 0, scanRecord.length);
-//
-//                    String receivedPackage = HexUtil.encodeHexStr(scanRecord, false);
-//                    Log.i(TAG, "name: " + name + "  receivedPackage：  " + receivedPackage);
-//
-//                    try {
-//                        // 参考 OontZ 广播包协议
-//                        int len;
-//                        while ((len = data[0] & 0xFF) > 0) {
-//                            Log.i(TAG, "len === " + len);
-//
-//                            if ((data[1] & 0xFF) == 0xFF) {
-//                                data = Arrays.copyOfRange(data, 0, len + 1);
-//
-//                                // BT的 MAC地址
-//                                byte[] macBytes = Arrays.copyOfRange(data, 4, 10);
-//                                String mac = HexUtil.encodeHexStr(macBytes, false);
-//                                bleDevice.setMac(mac);
-//                                 Log.i(TAG,"mac：  "+ mac);
-//
-//                                // int version = (data[11]&0xFF)<<8 | (data[10]&0xFF);    // 版本信息
-//                                int customerID;
-//                                if (len == 0x09) { // 兼容老版本
-//                                    customerID = 30;
-//                                } else {
-//                                    customerID = (data[13] & 0xFF) << 8 | data[12] & 0xFF;
-//                                }
-//
-//                                bleDevice.setCustomerID(customerID);
-//                                break;
-//
-//                            } else {
-//                                data = Arrays.copyOfRange(data, len + 1, data.length);
-//                            }
-//
-//                        }
                         synchronized (mScanDevices) {
                             mScanDevices.add(bleDevice);
                         }
                         for (MultipleBleDeviceListener listener : mListeners) {
                             listener.onFound(bleDevice);
                         }
-//
                         String autoConnectionAddress = getAutoConnectionAddress();
                         if (TextUtils.equals(autoConnectionAddress, bleDevice.getAddress())) {
                             autoConnect(bleDevice.getAddress());
                         }
-//
-//                    } catch (Exception ignored) {
-//                        ignored.printStackTrace();
-//                    }
-//                }
-
                 }
             }
 

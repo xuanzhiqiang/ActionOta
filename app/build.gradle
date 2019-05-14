@@ -54,5 +54,4 @@ dependencies {
     implementation project(':jl_bt_ota')
     implementation project(':bluetooth_utils')
 
-//    implementation 'com.zhiqiang.xuan:bluetooth_utils:0.0.1'
 }
