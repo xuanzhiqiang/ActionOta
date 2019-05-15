@@ -15,7 +15,6 @@ import android.text.TextUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -47,8 +46,6 @@ class BLEConnect extends BLEDiscovery {
             BluetoothDevice device = gatt.getDevice();
             String address = device.getAddress();
             log(TAG, " [LP] onConnectionStateChange  "+device.getName()+"  newState: "+newState+"  status: "+status);
-
-            mHandler.removeCallbacksAndMessages(address); // 取消超时消息
 
             if (status == BluetoothGatt.GATT_SUCCESS) {
                 if (newState == BluetoothGatt.STATE_CONNECTED && !mConnectedAddressList.contains(gatt.getDevice().getAddress())){
@@ -131,6 +128,7 @@ class BLEConnect extends BLEDiscovery {
             postDelayed(new Runnable() {
                 @Override
                 public void run() {
+                    mHandler.removeCallbacksAndMessages(gatt.getDevice().getAddress()); // 取消超时消息
                     onBleConnection(gatt.getDevice(), LP_BLE_STATE_CONNECTED);
                 }
             }, i * 200);
@@ -197,7 +195,7 @@ class BLEConnect extends BLEDiscovery {
     }
 
 
-    boolean connect(String address) {
+    boolean connect(final String address) {
 
         if (TextUtils.isEmpty(address)) return false;
 
@@ -237,6 +235,7 @@ class BLEConnect extends BLEDiscovery {
         Message obtain = Message.obtain(mHandler, new Runnable() {
             @Override
             public void run() {
+                disconnect(address);
                 BLEConnect.this.onBleConnection(bluetoothDevice, LP_BLE_STATE_CONNECT_TIMEOUT);
             }
         });
@@ -261,12 +260,15 @@ class BLEConnect extends BLEDiscovery {
             return false;
         }
         log(TAG, "disconnect: "+ address);
-        Objects.requireNonNull(mBluetoothGattMap.get(address)).disconnect();
+        BluetoothGatt bluetoothGatt = mBluetoothGattMap.get(address);
+        if (bluetoothGatt != null) {
+            bluetoothGatt.disconnect();
+        }
         return true;
     }
 
 
-    public void setIntervalTime(int intervalTime) {
+    void setIntervalTime(int intervalTime) {
         this.intervalTime = intervalTime;
     }
 
