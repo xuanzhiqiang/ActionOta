@@ -12,6 +12,7 @@ import android.os.Build;
 import android.os.Message;
 import android.text.TextUtils;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -190,7 +191,23 @@ class BLEConnect extends BLEDiscovery {
         synchronized (mConnectedAddressList){
             mConnectedAddressList.remove(address);
             BluetoothGatt bluetoothGatt = mBluetoothGattMap.remove(address);
-            if (bluetoothGatt != null)  bluetoothGatt.close();
+            if (bluetoothGatt != null) {
+                refreshDeviceCache(bluetoothGatt);
+                bluetoothGatt.close();
+            }
+        }
+    }
+
+    private void refreshDeviceCache(BluetoothGatt bluetoothGatt) {
+        try {
+            final Method refresh = BluetoothGatt.class.getMethod("refresh");
+            if (bluetoothGatt != null) {
+                boolean success = (Boolean) refresh.invoke(bluetoothGatt);
+                log(TAG, "refreshDeviceCache, is success:  " + success);
+            }
+        } catch (Exception e) {
+            loge(TAG,"exception occur while refreshing device: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 

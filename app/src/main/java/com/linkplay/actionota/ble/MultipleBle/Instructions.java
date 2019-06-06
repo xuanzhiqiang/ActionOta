@@ -140,6 +140,8 @@ public class Instructions {
     public final static byte[] OP_GET_POWER_ON_OFF = {0x00, 0x70, 0x0f, (byte) 0x80, 0x00, 0x00};
 
 
+    public final static byte[] OP_START_ACTION_OTA = {0x02, 0x02, 0x01};
+    public final static byte[] OP_STOP_ACTION_OTA = {0x02, 0x02, 0x02};
 
 
 

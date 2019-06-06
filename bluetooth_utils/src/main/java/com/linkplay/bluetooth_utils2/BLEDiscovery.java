@@ -20,6 +20,7 @@ class BLEDiscovery extends BTAdapter {
 
     private boolean mScanning;
     private final List<ScanFilter> mScanFilters = new ArrayList<>();
+    private ScanSettings scanSettings = new ScanSettings.Builder().setScanMode(ScanSettings.SCAN_MODE_LOW_POWER).build();
 
     private Runnable mStopScanTask = new Runnable() {
         @Override
@@ -99,9 +100,6 @@ class BLEDiscovery extends BTAdapter {
             log(TAG, " [LP] StartScan....");
 
             mScanning = true;
-
-            ScanSettings scanSettings = new ScanSettings.Builder()
-                    .setScanMode(ScanSettings.SCAN_MODE_LOW_POWER).build();
 
             bluetoothLeScanner.startScan(mScanFilters, scanSettings, mBleScanCallback);
 

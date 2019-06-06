@@ -47,6 +47,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
+import static com.linkplay.actionota.ble.MultipleBle.Instructions.OP_START_ACTION_OTA;
+
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
@@ -77,8 +79,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         bleManager = BleManager.init(getApplicationContext());
-//        jlOtaManager = JLOtaManager.initOTAManager(getApplicationContext(), bleManager);
-        jlOtaManager = null;
+        jlOtaManager = JLOtaManager.initOTAManager(getApplicationContext(), bleManager);
+//        jlOtaManager = null;
 
         listView = findViewById(R.id.list_view);
         swipeRefreshLayout = findViewById(R.id.swipeLayout);
@@ -115,11 +117,11 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        otaPath = Environment.getExternalStorageDirectory().getPath()
-                + File.separator+"actionOtaFile"+File.separator+"action.OTA";
-
 //        otaPath = Environment.getExternalStorageDirectory().getPath()
-//                + File.separator+"actionOtaFile"+File.separator+"updata.bfu";
+//                + File.separator+"actionOtaFile"+File.separator+"action.OTA";
+
+        otaPath = Environment.getExternalStorageDirectory().getPath()
+                + File.separator+"actionOtaFile"+File.separator+"updata.bfu";
 
         File file = new File(Environment.getExternalStorageDirectory().getPath() + File.separator + "actionOtaFile");
         if (!file.exists()) {
@@ -138,10 +140,16 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (new File(otaPath).exists()) {
-                    mOtaing = true;
-
-                    actionOtaManager.startOTA(otaPath);
-//                    startJLOta(otaPath);
+//                    bleManager.sendDataJL(bleManager.getCurrentDevice().getAddress(), OP_START_ACTION_OTA);
+//                    handler.postDelayed(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            mOtaing = true;
+//                            bleManager.mlpBluetooth.setIntervalTime(100);
+//                            actionOtaManager.startOTA(otaPath);
+//                        }
+//                    }, 1000);
+                    startJLOta(otaPath);
                 }else{
                     showToast("文件不存在");
                 }
@@ -161,7 +169,7 @@ public class MainActivity extends AppCompatActivity {
         addListener();
         requestPermission();
 
-        initActionOta();
+//        initActionOta();
     }
 
 
@@ -421,6 +429,17 @@ public class MainActivity extends AppCompatActivity {
                 adapter.updateDevice(device);
 
                 final int deviceState = device.getState();
+                int JL_CODE;
+                if (deviceState == BaseCode.LP_BLE_STATE_CONNECTED){
+                    JL_CODE = StateCode.CONNECTION_OK;
+                }else if(deviceState == BaseCode.LP_BLE_STATE_CONNECTING){
+                    JL_CODE = StateCode.CONNECTION_CONNECTING;
+                }else{
+                    JL_CODE = StateCode.CONNECTION_DISCONNECT;
+                }
+                if(jlOtaManager != null){
+                    jlOtaManager.setBTStatus(JL_CODE);
+                }
 
                 if (device.getState() == BaseCode.LP_BLE_STATE_CONNECTED && jlOtaManager != null && !jlOtaManager.isOTA()){
                     Log.i(TAG, "queryMandatoryUpdate: " );
@@ -437,14 +456,6 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 if (jlOtaManager != null && jlOtaManager.isOTA()){
-                    int JL_CODE;
-                    if (deviceState == BaseCode.LP_BLE_STATE_CONNECTED){
-                        JL_CODE = StateCode.CONNECTION_OK;
-                    }else if(deviceState == BaseCode.LP_BLE_STATE_CONNECTING){
-                        JL_CODE = StateCode.CONNECTION_CONNECTING;
-                    }else{
-                        JL_CODE = StateCode.CONNECTION_DISCONNECT;
-                    }
                     Log.i(TAG, "通知杰理蓝牙状态改变 ---> "+JL_CODE);
                     jlOtaManager.onBtDeviceConnection(bleManager.getCurrentDevice(), JL_CODE);
 

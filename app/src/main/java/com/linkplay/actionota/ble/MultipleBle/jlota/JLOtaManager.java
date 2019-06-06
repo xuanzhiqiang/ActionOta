@@ -5,6 +5,7 @@ import android.bluetooth.BluetoothGatt;
 import android.content.Context;
 import android.util.Log;
 
+import com.jieli.jl_bt_ota.constant.StateCode;
 import com.jieli.jl_bt_ota.impl.BluetoothOTAManager;
 import com.jieli.jl_bt_ota.interfaces.IActionCallback;
 import com.jieli.jl_bt_ota.interfaces.IUpgradeCallback;
@@ -22,6 +23,16 @@ public class JLOtaManager extends BluetoothOTAManager {
     private static JLOtaManager otaManager;
 
     private boolean isqQeryMandatoryUpdate = false;
+
+    private int BTStatus = 0;
+
+    public int getBTStatus() {
+        return BTStatus;
+    }
+
+    public void setBTStatus(int BTStatus) {
+        this.BTStatus = BTStatus;
+    }
 
     private JLOtaManager(Context context) {
         super(context);
@@ -63,11 +74,17 @@ public class JLOtaManager extends BluetoothOTAManager {
 
     @Override
     public BluetoothDevice getConnectedDevice() {
+        if(getBTStatus() != StateCode.CONNECTION_OK){
+            return null;
+        }
         return bleManager.getCurrentDevice();
     }
 
     @Override
     public BluetoothGatt getConnectedBluetoothGatt() {
+        if(getBTStatus() != StateCode.CONNECTION_OK){
+            return null;
+        }
         return bleManager.getDeviceGatt();
     }
 

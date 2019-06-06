@@ -32,7 +32,7 @@ public class BleManager {
 
     private final Handler handler = new Handler(Looper.getMainLooper());
 
-    private LP_BTClient mlpBluetooth;
+    public LP_BTClient mlpBluetooth;
     private int mtu = 512;
     private BluetoothDevice mCurrentDevice;
     private LP_BLEDevice mCurrentLPDevice;
