@@ -36,6 +36,11 @@ android {
         }
     }
 
+    lintOptions {
+        abortOnError false
+    }
+
+
 }
 
 dependencies {
@@ -52,6 +57,10 @@ dependencies {
 
     implementation project(':lpvr-release')
     implementation project(':jl_bt_ota')
-    implementation project(':bluetooth_utils')
+//    implementation project(':bluetooth_utils')
+
+    implementation 'com.linkplay:bluetooth_utils:1.0.0'
+
+
 
 }

@@ -1,22 +1,27 @@
 apply plugin: 'com.android.library'
-apply from: './bintray-config.gradle'
+apply plugin: 'com.novoda.bintray-release'
 
 
 def _ext = rootProject.ext
 
 def _compileSdkVersion = _ext.has('compileSdkVersion') ? _ext.compileSdkVersion : 28
-def _buildToolsVersion = _ext.has('buildToolsVersion') ? _ext.buildToolsVersion : '28.0.3'
 def _minSdkVersion = _ext.has('minSdkVersion') ? _ext.minSdkVersion : 21
 def _targetSdkVersion = _ext.has('targetSdkVersion') ? _ext.targetSdkVersion : 28
 
 android {
     compileSdkVersion _compileSdkVersion
-    buildToolsVersion _buildToolsVersion
 
     defaultConfig {
+//        applicationId "com.linkplay.bluetooth_utils2"
         minSdkVersion _minSdkVersion
         targetSdkVersion _targetSdkVersion
+        versionCode 1
+        versionName "1.0"
     }
+
+//    lintOptions {
+//        abortOnError false
+//    }
 }
 
 dependencies {
@@ -24,5 +29,17 @@ dependencies {
 }
 
 
-apply from: './installv1.gradle'
-apply from: './bintrayv1.gradle'
+Properties properties = new Properties()
+properties.load(rootProject.file('local.properties').newDataInputStream())
+
+publish {
+    userOrg = 'xuanzhiqiang' //bintray注册的用户名（不是邮箱）
+    groupId = 'com.linkplay'
+    artifactId = 'bluetooth_utils' //项目名称
+    publishVersion = '1.0.0' //版本号
+    desc = 'bluetooth utils' //项目描述。可空。
+    website = 'https://github.com/xuanzhiqiang/ActionOta.git' //项目地址，一般填github地址。可空。
+
+    bintrayUser = properties.getProperty("bintray.user")
+    bintrayKey = properties.getProperty("bintray.apikey")
+}
