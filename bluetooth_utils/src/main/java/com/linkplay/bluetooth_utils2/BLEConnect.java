@@ -130,6 +130,7 @@ class BLEConnect extends BLEDiscovery {
                 @Override
                 public void run() {
                     mHandler.removeCallbacksAndMessages(gatt.getDevice().getAddress()); // 取消超时消息
+                    log(TAG, "取消连接超时的消息： "+ gatt.getDevice().getAddress());
                     onBleConnection(gatt.getDevice(), LP_BLE_STATE_CONNECTED);
                 }
             }, i * 200);
@@ -188,6 +189,7 @@ class BLEConnect extends BLEDiscovery {
 
     private void removeDevice(String address){
         log(TAG, "mConnectedAddressList.remove : "+ address);
+        mHandler.removeCallbacksAndMessages(address); // 取消超时消息
         synchronized (mConnectedAddressList){
             mConnectedAddressList.remove(address);
             BluetoothGatt bluetoothGatt = mBluetoothGattMap.remove(address);
@@ -258,6 +260,7 @@ class BLEConnect extends BLEDiscovery {
         });
         obtain.obj = bluetoothDevice.getAddress();
         mHandler.sendMessageDelayed(obtain, 15 * 1000); // 15 秒超时
+        log(TAG, "BleManager : " + "发送连接超时的消息， 15秒后超时： "+ address);
 
         BluetoothGatt bluetoothGatt;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
